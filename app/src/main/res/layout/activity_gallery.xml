@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_gallery"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="vn.newai.ocr.GalleryActivity">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/galleryCoordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/galleryLinearToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:orientation="vertical">
+
+                <include layout="@layout/toolbar_gallery" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/galleryTextViewGuide"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/galleryLinearToolbar"
+                android:gravity="center"
+                android:text="@string/guide_scroll_down"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/colorSecondaryText" />
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/galleryRefreshGrid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/galleryLinearToolbar">
+
+                <GridView
+                    android:id="@+id/galleryGridThumb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:horizontalSpacing="3dp"
+                    android:listSelector="@android:color/holo_blue_light"
+                    android:numColumns="4"
+                    android:stretchMode="columnWidth"
+                    android:verticalSpacing="3dp" />
+            </android.support.v4.widget.SwipeRefreshLayout>
+        </RelativeLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/galleryFABCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_action_camera" />
+    </android.support.design.widget.CoordinatorLayout>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/galleryNavDrawer"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@android:color/white"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_list" />
+</android.support.v4.widget.DrawerLayout>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/nav_group_activity"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_activity_gallery"
+            android:icon="@drawable/ic_action_gallery"
+            android:title="@string/activity_gallery" />
+        <item
+            android:id="@+id/nav_activity_file"
+            android:icon="@drawable/ic_action_file"
+            android:title="@string/activity_file" />
+    </group>
+    <group
+        android:id="@+id/nav_group_setting"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_setting"
+            android:icon="@drawable/ic_action_setting"
+            android:title="@string/activity_setting" />
+    </group>
+</menu>

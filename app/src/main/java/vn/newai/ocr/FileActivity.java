@@ -17,7 +17,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -30,14 +29,13 @@ import android.view.View;
 import android.view.Window;
 import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.gotev.uploadservice.ServerResponse;
 import net.gotev.uploadservice.UploadInfo;
+import net.gotev.uploadservice.UploadService;
 import net.gotev.uploadservice.UploadStatusDelegate;
 
 import java.io.File;
@@ -250,8 +248,17 @@ public class FileActivity extends AppCompatActivity {
     private void sendFile(String filePath) {
         String fileName = String.valueOf(System.currentTimeMillis() / 1000) + "_" + userEmail + ".pdf";
         try {
-            final Snackbar sackbarLoading = Snackbar.make(coordinatorLayoutContainer, getString(R.string.info_sending_server), Snackbar.LENGTH_INDEFINITE);
-            sackbarLoading.show();
+            /*-Snack bar uploading progress*/
+            final Snackbar snackbarLoading = Snackbar.make(coordinatorLayoutContainer, getString(R.string.info_sending_server), Snackbar.LENGTH_INDEFINITE);
+            snackbarLoading.setAction(getString(R.string.btn_cancel), new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UploadService.stopAllUploads();
+                }
+            });
+            snackbarLoading.show();
+
+            /*-Snack bar alert when upload process done*/
             final Snackbar snackbarAlert = Snackbar.make(coordinatorLayoutContainer, getString(R.string.success_send_server), Snackbar.LENGTH_INDEFINITE);
             snackbarAlert.setAction(getString(R.string.btn_dismiss), new View.OnClickListener() {
                 @Override
@@ -267,14 +274,14 @@ public class FileActivity extends AppCompatActivity {
 
                 @Override
                 public void onError(Context context, UploadInfo uploadInfo, Exception exception) {
-                    sackbarLoading.dismiss();
+                    snackbarLoading.dismiss();
                     snackbarAlert.setText(getString(R.string.err_send_server));
                     snackbarAlert.show();
                 }
 
                 @Override
                 public void onCompleted(Context context, UploadInfo uploadInfo, ServerResponse serverResponse) {
-                    sackbarLoading.dismiss();
+                    snackbarLoading.dismiss();
                     try {
                         String response = new String(serverResponse.getBody(), "UTF-8");
                         if (response.toLowerCase().startsWith("file saved")) {
@@ -291,7 +298,7 @@ public class FileActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(Context context, UploadInfo uploadInfo) {
-                    sackbarLoading.dismiss();
+                    snackbarLoading.dismiss();
                     snackbarAlert.setText(getString(R.string.err_cancel_send_server));
                     snackbarAlert.show();
                 }

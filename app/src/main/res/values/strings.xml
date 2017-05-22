@@ -1,7 +1,7 @@
 <resources>
-    <string name="format_date_time">dd/MM/yyyy hh:mm a</string>
-    <string name="format_date">dd/MM/yyyy</string>
-    <string name="format_time">hh:mm:ss a</string>
+    <string name="format_date_time" translatable="false">dd/MM/yyyy hh:mm a</string>
+    <string name="format_date" translatable="false">dd/MM/yyyy</string>
+    <string name="format_time" translatable="false">hh:mm:ss a</string>
 
     <string name="app_name">OCR</string>
     <string name="activity_gallery">Thư viện ảnh</string>
@@ -37,11 +37,11 @@
     <string name="upload_notification_cancelled">Tiến trình bị huỷ</string>
     <string name="upload_notification_completed">Tiến trình hoàn thành</string>
 
-    <string name="lang_eng">English</string>
-    <string name="lang_vie">Tiếng Việt</string>
+    <string name="lang_eng" translatable="false">English</string>
+    <string name="lang_vie" translatable="false">Tiếng Việt</string>
 
-    <string name="lang_value_eng">eng</string>
-    <string name="lang_value_vie">vie</string>
+    <string name="lang_value_eng" translatable="false">eng</string>
+    <string name="lang_value_vie" translatable="false">vie</string>
 
     <string name="preference_email_title">Email nhận kết quả OCR</string>
     <string name="preference_email_summary">Địa chỉ mail để nhận kết quả OCR</string>

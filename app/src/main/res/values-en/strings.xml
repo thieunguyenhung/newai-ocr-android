@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OCR</string>
+    <string name="activity_file">PDF Browser</string>
+    <string name="activity_gallery">Gallery</string>
+    <string name="activity_setting">Settings</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_dismiss">Dismiss</string>
+    <string name="btn_no">No</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_undo">Undo</string>
+    <string name="btn_yes">Yes</string>
+    <string name="dialog_ocr_file">OCR this file</string>
+    <string name="drawer_close">Navigation drawer closed</string>
+    <string name="drawer_open">Navigation drawer opened</string>
+    <string name="err_cancel_send_server">Process canceled</string>
+    <string name="err_list_image_null">Gallery is empty</string>
+    <string name="err_permission_denied">Permission denied</string>
+    <string name="err_send_server">Error processing, please try again later</string>
+    <string name="guide_scroll_down">Pulldown to refresh</string>
+    <string name="guide_user_email">Please enter your email address to receive the results</string>
+    <string name="info_sending_server">Processing, please wait…</string>
+    <string name="preference_email_summary">Email address to receive OCR results</string>
+    <string name="preference_email_title">Email address</string>
+    <string name="preference_lang_summary">Language to OCR files or images</string>
+    <string name="preference_lang_title">OCR Language</string>
+    <string name="success_send_server">Processing completed, results will be emailed in a few minutes</string>
+    <string name="upload_notification_cancelled">Process is canceled</string>
+    <string name="upload_notification_completed">Process is completed</string>
+    <string name="upload_notification_title">Processing your request</string>
+    <string name="upload_notification_error">There was an error processing your request</string>
+</resources>

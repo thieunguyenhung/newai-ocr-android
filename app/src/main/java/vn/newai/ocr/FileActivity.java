@@ -284,7 +284,7 @@ public class FileActivity extends AppCompatActivity {
                     snackbarLoading.dismiss();
                     try {
                         String response = new String(serverResponse.getBody(), "UTF-8");
-                        if (response.toLowerCase().startsWith("file saved")) {
+                        if (response.toLowerCase().startsWith("ocr result will send to")) {
                             snackbarAlert.setText(getString(R.string.success_send_server));
                             snackbarAlert.show();
                         } else {

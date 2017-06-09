@@ -10,6 +10,8 @@ import vn.newai.ocr.GalleryActivity;
 import vn.newai.ocr.R;
 
 public class UploadRequest {
+    private static final String UPLOAD_URL = "http://35.186.147.86:8080/newai-ocr-api/rest/upload";
+
     /**
      * Get net.gotev.uploadservice.MultipartUploadRequest to upload file
      *
@@ -21,7 +23,7 @@ public class UploadRequest {
     public static MultipartUploadRequest getUploadRequest(Context context, String filePath, String fileName) throws Exception {
         String userLang = LocalStorage.getFromLocal(context, LocalStorage.KEY_OCR_LANG);
         String userEmail = LocalStorage.getFromLocal(context, LocalStorage.KEY_USER_EMAIL);
-        return new MultipartUploadRequest(context, "http://192.168.0.105:8080/newai/rest/upload")
+        return new MultipartUploadRequest(context, UPLOAD_URL)
                 .addFileToUpload(filePath, "file", fileName)
                 .addParameter("lang", userLang)
                 .addParameter("email", userEmail)

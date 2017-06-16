@@ -11,10 +11,14 @@
     <string name="drawer_open">Mở menu trái</string>
     <string name="drawer_close">Đóng menu trái</string>
 
+    <string name="permission_rationale_read_external_storage">Ứng dụng cần truy xuất dữ liệu để thực hiện OCR. Vui lòng cấp quyền trong Cài đặt.</string>
+    <string name="permission_rationale_camera">Ứng dụng cần truy xuất Camera để chụp hình. Vui lòng cấp quyền trong Cài đặt.</string>
+
     <string name="err_list_image_null">Danh sách hình rỗng</string>
     <string name="err_permission_denied">Quyền truy cập bị từ chối</string>
     <string name="err_send_server">Tiến trình xử lý gặp lỗi, vui lòng thử lại sau</string>
     <string name="err_cancel_send_server">Đã huỷ tiến trình xử lý</string>
+    <string name="err_file_too_large">Tập tin lớn hơn mức quy định, tối đa là 5MB</string>
 
     <string name="success_send_server">Đã xử lý, kết quả sẽ được gửi về email trong ít phút nữa</string>
 
@@ -23,14 +27,18 @@
     <string name="guide_scroll_down">Kéo xuống để tải lại</string>
     <string name="guide_user_email">Vui lòng nhập địa chỉ email để nhận kết quả</string>
 
-    <string name="dialog_ocr_file">Bạn muốn OCR tập tin</string>
+    <string name="dialog_ocr_file">Thực hiện OCR tập tin</string>
+    <string name="dialog_sorry_inconvenience">Xin lỗi vì sự bất tiện này!</string>
 
+    <string name="btn_system_setting">Cài đặt</string>
+    <string name="btn_exit_app">Thoát</string>
     <string name="btn_dismiss">Ẩn</string>
     <string name="btn_undo">Hoàn tác</string>
     <string name="btn_ok">Đồng ý</string>
     <string name="btn_cancel">Huỷ</string>
     <string name="btn_yes">Đồng ý</string>
     <string name="btn_no">Không</string>
+    <string name="btn_close">Đóng</string>
 
     <string name="upload_notification_title">Đang xử lý OCR</string>
     <string name="upload_notification_error">Lỗi trong quá trình xử lý</string>

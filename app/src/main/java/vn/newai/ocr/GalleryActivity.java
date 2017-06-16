@@ -2,6 +2,7 @@ package vn.newai.ocr;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -22,6 +24,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -260,15 +263,20 @@ public class GalleryActivity extends AppCompatActivity {
                     READ_EXTERNAL_STORAGE_PERMISSION = true;
                     this.loadGridImage();
                 } else {
-                    gridImageGallery.setVisibility(View.INVISIBLE);
-                    textViewGuide.setVisibility(View.VISIBLE);
-                    READ_EXTERNAL_STORAGE_PERMISSION = false;
-                    Snackbar.make(this.coordinatorLayoutContainer, getString(R.string.err_permission_denied), Snackbar.LENGTH_INDEFINITE).setAction(getString(R.string.btn_undo), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            checkReadExternalPermission();
-                        }
-                    }).show();
+                    /*-User just denied*/
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(GalleryActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        gridImageGallery.setVisibility(View.INVISIBLE);
+                        textViewGuide.setVisibility(View.VISIBLE);
+                        READ_EXTERNAL_STORAGE_PERMISSION = false;
+                        Snackbar.make(this.coordinatorLayoutContainer, getString(R.string.err_permission_denied), Snackbar.LENGTH_INDEFINITE).setAction(getString(R.string.btn_undo), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                checkReadExternalPermission();
+                            }
+                        }).show();
+                    } else { /*-User denied and check never ask again*/
+                        this.showRequestPermissionDialog(getString(R.string.permission_rationale_read_external_storage));
+                    }
                 }
                 break;
             }
@@ -278,13 +286,18 @@ public class GalleryActivity extends AppCompatActivity {
                     CAMERA_PERMISSION = true;
                     GalleryActivity.this.startCameraIntent();
                 } else {
-                    CAMERA_PERMISSION = false;
-                    Snackbar.make(this.coordinatorLayoutContainer, getString(R.string.err_permission_denied), Snackbar.LENGTH_LONG).setAction(getString(R.string.btn_undo), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            checkCameraPermission();
-                        }
-                    }).show();
+                    /*-User just denied*/
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(GalleryActivity.this, Manifest.permission.CAMERA)) {
+                        CAMERA_PERMISSION = false;
+                        Snackbar.make(this.coordinatorLayoutContainer, getString(R.string.err_permission_denied), Snackbar.LENGTH_LONG).setAction(getString(R.string.btn_undo), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                checkCameraPermission();
+                            }
+                        }).show();
+                    } else { /*-User denied and check never ask again*/
+                        this.showRequestPermissionDialog(getString(R.string.permission_rationale_camera));
+                    }
                 }
                 break;
             }
@@ -293,13 +306,18 @@ public class GalleryActivity extends AppCompatActivity {
                     Log.d("SUCCESS", "WRITE_EXTERNAL_STORAGE_PERMISSION granted");
                     WRITE_EXTERNAL_STORAGE_PERMISSION = true;
                 } else {
-                    WRITE_EXTERNAL_STORAGE_PERMISSION = false;
-                    Snackbar.make(this.coordinatorLayoutContainer, getString(R.string.err_permission_denied), Snackbar.LENGTH_INDEFINITE).setAction(getString(R.string.btn_undo), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            checkWriteExternalPermission();
-                        }
-                    }).show();
+                     /*-User just denied*/
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(GalleryActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        WRITE_EXTERNAL_STORAGE_PERMISSION = false;
+                        Snackbar.make(this.coordinatorLayoutContainer, getString(R.string.err_permission_denied), Snackbar.LENGTH_INDEFINITE).setAction(getString(R.string.btn_undo), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                checkWriteExternalPermission();
+                            }
+                        }).show();
+                    } else { /*-User denied and check never ask again*/
+                        this.showRequestPermissionDialog(getString(R.string.permission_rationale_read_external_storage));
+                    }
                 }
                 break;
             }
@@ -389,6 +407,9 @@ public class GalleryActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Fetch all image id from MediaStore
+     */
     private void getListImageId() {
         Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection = new String[]{MediaStore.Images.Media._ID, MediaStore.Images.Media.MIME_TYPE};
@@ -419,6 +440,9 @@ public class GalleryActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Reload grid images by create new instance of GalleryImageAdapter
+     */
     private void loadGridImage() {
         this.getListImageId();
         if (null != this.listImageId && this.listImageId.size() > 0) {
@@ -433,6 +457,9 @@ public class GalleryActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Start camera
+     */
     private void startCameraIntent() {
         File imagesFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "NewAI");
         if (!imagesFolder.exists()) {
@@ -449,5 +476,42 @@ public class GalleryActivity extends AppCompatActivity {
         Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
         startActivityForResult(i, MY_PERMISSIONS_REQUEST_CAMERA);
+    }
+
+    /**
+     * Show rationale for asking a permission
+     *
+     * @param rationale message to show on dialog, use <b>string.xml</b> to get rationale
+     */
+    private void showRequestPermissionDialog(String rationale) {
+        /*-Check if rationale is null or empty*/
+        if (null == rationale || rationale.isEmpty())
+            return;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(rationale);
+        builder.setPositiveButton(getString(R.string.btn_system_setting),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        /*-Go to system setting*/
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        GalleryActivity.this.startActivity(intent);
+                    }
+                });
+        builder.setNegativeButton(getString(R.string.btn_cancel),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                       /*-Dismiss dialog*/
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 }

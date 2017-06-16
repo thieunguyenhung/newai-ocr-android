@@ -31,4 +31,11 @@
     <string name="upload_notification_error">There was an error processing your request</string>
     <string name="preference_output_format_title">Output Format</string>
     <string name="preference_output_format_summary">Output file format for OCR result</string>
+    <string name="btn_close">Close</string>
+    <string name="btn_exit_app">Exit</string>
+    <string name="btn_system_setting">Settings</string>
+    <string name="dialog_sorry_inconvenience">Sorry for the inconvenience!</string>
+    <string name="err_file_too_large">File is too large, allowed maximum size is 5MB</string>
+    <string name="permission_rationale_read_external_storage">The application needs to access to storage in order to perform OCR. Please grant permission in Settings.</string>
+    <string name="permission_rationale_camera">The application needs to access to Camera in order to take pictures. Please grant permission in Settings.</string>
 </resources>

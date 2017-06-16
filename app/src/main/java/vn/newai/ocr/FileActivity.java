@@ -1,17 +1,18 @@
 package vn.newai.ocr;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.PersistableBundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
@@ -26,7 +27,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -67,6 +67,11 @@ public class FileActivity extends AppCompatActivity {
     /*-Request result code constant*/
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 11;
     private static boolean READ_EXTERNAL_STORAGE_PERMISSION = false;
+
+    /**
+     * Max allowed file size (5MB)
+     */
+    private static final long MAX_FILE_SIZE = 5452595;
 
     @Override
     public void onPostCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
@@ -158,39 +163,51 @@ public class FileActivity extends AppCompatActivity {
         fileRefreshList.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getListFileAsync(ROOT_PATH);
+                if (READ_EXTERNAL_STORAGE_PERMISSION) {
+                    getListFileAsync(ROOT_PATH);
+                } else {
+                    /*-Stop refresh animation*/
+                    if (fileRefreshList.isRefreshing())
+                        fileRefreshList.setRefreshing(false);
+                    FileActivity.this.checkReadExternalPermission();
+                }
             }
         });
         listViewPDFFile.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 File file = new File(listPDFFilePath.get(position));
-                AlertDialog.Builder builder;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new AlertDialog.Builder(FileActivity.this, android.R.style.Theme_Material_Light_Dialog_Alert);
-                } else {
-                    builder = new AlertDialog.Builder(FileActivity.this);
-                }
-                builder.setMessage(getString(R.string.dialog_ocr_file) + " " + file.getName() + "?")
-                        .setPositiveButton(getString(R.string.btn_ok), new DialogInterface.OnClickListener() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(FileActivity.this);
+                builder.setMessage(getString(R.string.dialog_ocr_file) + " " + file.getName() + "?");
+                builder.setPositiveButton(getString(R.string.btn_ok),
+                        new DialogInterface.OnClickListener() {
+                            @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Log.d("Button", "Yes clicked");
+                                Log.d("Button", "Yes OCR clicked");
                                 if (!userEmail.isEmpty() && !userLang.isEmpty()) {
-                                    sendFile(listPDFFilePath.get(position));
+                                    File file = new File(FileActivity.this.listPDFFilePath.get(position));
+                                    if (file.length() > MAX_FILE_SIZE)
+                                        showLargeFileErrDialog();
+                                    else
+                                        sendFile(listPDFFilePath.get(position));
                                 } else {
                                     Intent intent = new Intent(FileActivity.this, SettingActivity.class);
                                     FileActivity.this.startActivity(intent);
                                 }
                             }
-                        })
-                        .setNegativeButton(getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
+                        });
+                builder.setNegativeButton(getString(R.string.btn_cancel),
+                        new DialogInterface.OnClickListener() {
+                            @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Log.d("Button", "No clicked");
+                                /*-Dismiss dialog*/
+                                Log.d("Button", "Cancel OCR clicked");
+                                dialog.dismiss();
                             }
                         });
-                Dialog dialog = builder.create();
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                //dialog.setCanceledOnTouchOutside(false);
+                AlertDialog dialog = builder.create();
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
                 dialog.show();
             }
         });
@@ -229,16 +246,21 @@ public class FileActivity extends AppCompatActivity {
                     READ_EXTERNAL_STORAGE_PERMISSION = true;
                     getListFileAsync(ROOT_PATH);
                 } else {
-                    FileActivity.this.fileProgressBar.setVisibility(View.INVISIBLE);
-                    FileActivity.this.listViewPDFFile.setVisibility(View.INVISIBLE);
-                    FileActivity.this.textViewGuide.setVisibility(View.VISIBLE);
-                    READ_EXTERNAL_STORAGE_PERMISSION = false;
-                    Snackbar.make(this.coordinatorLayoutContainer, getString(R.string.err_permission_denied), Snackbar.LENGTH_INDEFINITE).setAction(getString(R.string.btn_undo), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            checkReadExternalPermission();
-                        }
-                    }).show();
+                    /*-User just denied*/
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(FileActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        FileActivity.this.fileProgressBar.setVisibility(View.INVISIBLE);
+                        FileActivity.this.listViewPDFFile.setVisibility(View.INVISIBLE);
+                        FileActivity.this.textViewGuide.setVisibility(View.VISIBLE);
+                        READ_EXTERNAL_STORAGE_PERMISSION = false;
+                        Snackbar.make(this.coordinatorLayoutContainer, getString(R.string.err_permission_denied), Snackbar.LENGTH_INDEFINITE).setAction(getString(R.string.btn_undo), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                checkReadExternalPermission();
+                            }
+                        }).show();
+                    } else { /*-User denied and check never ask again*/
+                        this.showRequestPermissionDialog(getString(R.string.permission_rationale_read_external_storage));
+                    }
                 }
                 break;
             }
@@ -320,6 +342,9 @@ public class FileActivity extends AppCompatActivity {
                 super.onPreExecute();
                 Log.d("Get list file", "Started");
                 listPDFFilePath.clear();
+                FileActivity.this.fileProgressBar.setVisibility(View.VISIBLE);
+                FileActivity.this.textViewGuide.setVisibility(View.INVISIBLE);
+                FileActivity.this.listViewPDFFile.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -331,10 +356,17 @@ public class FileActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                FileAdapter adapter = new FileAdapter(FileActivity.this, listPDFFilePath);
-                FileActivity.this.listViewPDFFile.setAdapter(adapter);
-                FileActivity.this.fileProgressBar.setVisibility(View.INVISIBLE);
-                FileActivity.this.listViewPDFFile.setVisibility(View.VISIBLE);
+                if (null != listPDFFilePath && listPDFFilePath.size() > 0) {
+                    FileAdapter adapter = new FileAdapter(FileActivity.this, listPDFFilePath);
+                    FileActivity.this.listViewPDFFile.setAdapter(adapter);
+                    FileActivity.this.fileProgressBar.setVisibility(View.INVISIBLE);
+                    FileActivity.this.listViewPDFFile.setVisibility(View.VISIBLE);
+
+                } else {
+                    FileActivity.this.fileProgressBar.setVisibility(View.INVISIBLE);
+                    FileActivity.this.listViewPDFFile.setVisibility(View.INVISIBLE);
+                    FileActivity.this.textViewGuide.setVisibility(View.VISIBLE);
+                }
                 if (fileRefreshList.isRefreshing())
                     fileRefreshList.setRefreshing(false);
                 Log.d("Get list file", "DONE");
@@ -345,8 +377,8 @@ public class FileActivity extends AppCompatActivity {
     }
 
     /**
-     * Recursive function to fetch all available directory from input path.
-     * <b>DO NOT</b> call this function directly, use getListFileAsync instead
+     * Recursive function to fetch all available directory from input path.<br>
+     * <b>DO NOT</b> call this function directly, use getListFileAsync instead.
      *
      * @param path Input path to fetch all directory
      */
@@ -365,7 +397,7 @@ public class FileActivity extends AppCompatActivity {
     }
 
     /**
-     * Adds path of file to list pdf file if it is a PDF
+     * Adds path of file to list pdf file if it is a PDF.
      *
      * @param file File that will be added to list
      */
@@ -380,5 +412,64 @@ public class FileActivity extends AppCompatActivity {
                 this.listPDFFilePath.add(file.getAbsolutePath());
             }
         }
+    }
+
+    /**
+     * Show rationale for asking a permission
+     *
+     * @param rationale message to show on dialog, use <b>string.xml</b> to get rationale
+     */
+    private void showRequestPermissionDialog(String rationale) {
+        /*-Check if rationale is null or empty*/
+        if (null == rationale || rationale.isEmpty())
+            return;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(rationale);
+        builder.setPositiveButton(getString(R.string.btn_system_setting),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        /*-Go to system setting*/
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        FileActivity.this.startActivity(intent);
+                    }
+                });
+        builder.setNegativeButton(getString(R.string.btn_cancel),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        /*-Dismiss dialog*/
+                        dialog.dismiss();
+                        FileActivity.this.fileProgressBar.setVisibility(View.INVISIBLE);
+                        FileActivity.this.textViewGuide.setVisibility(View.VISIBLE);
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+    }
+
+    /**
+     * Show dialog to inform user that a file is too large to process (bigger than 5MB)
+     */
+    private void showLargeFileErrDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.err_file_too_large) + ". " + getString(R.string.dialog_sorry_inconvenience));
+        builder.setPositiveButton(getString(R.string.btn_close),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                       /*-Dismiss dialog*/
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 }

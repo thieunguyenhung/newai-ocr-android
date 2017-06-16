@@ -22,10 +22,12 @@ public class UploadRequest {
      */
     public static MultipartUploadRequest getUploadRequest(Context context, String filePath, String fileName) throws Exception {
         String userLang = LocalStorage.getFromLocal(context, LocalStorage.KEY_OCR_LANG);
+        String outputFormat = LocalStorage.getFromLocal(context, LocalStorage.KEY_OUTPUT_FORMAT);
         String userEmail = LocalStorage.getFromLocal(context, LocalStorage.KEY_USER_EMAIL);
         return new MultipartUploadRequest(context, UPLOAD_URL)
                 .addFileToUpload(filePath, "file", fileName)
                 .addParameter("lang", userLang)
+                .addParameter("outputFormat", outputFormat)
                 .addParameter("email", userEmail)
                 .setNotificationConfig(getUploadNotificationConfig(context))
                 .setMaxRetries(1)

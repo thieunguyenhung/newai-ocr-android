@@ -39,12 +39,20 @@
 
     <string name="lang_eng" translatable="false">English</string>
     <string name="lang_vie" translatable="false">Tiếng Việt</string>
-
     <string name="lang_value_eng" translatable="false">eng</string>
     <string name="lang_value_vie" translatable="false">vie</string>
+
+    <string name="output_format_html" translatable="false">HTML (.html)</string>
+    <string name="output_format_value_html" translatable="false">html</string>
+    <string name="output_format_word" translatable="false">Microsoft Word (.docx)</string>
+    <string name="output_format_value_word" translatable="false">word</string>
+    <string name="output_format_excel" translatable="false">Microsoft Excel (.xlsx)</string>
+    <string name="output_format_value_excel" translatable="false">excel</string>
 
     <string name="preference_email_title">Email nhận kết quả OCR</string>
     <string name="preference_email_summary">Địa chỉ mail để nhận kết quả OCR</string>
     <string name="preference_lang_title">Ngôn ngữ OCR</string>
     <string name="preference_lang_summary">Chọn ngôn ngữ để OCR tập tin hoặc ảnh</string>
+    <string name="preference_output_format_title">Định dạng tập tin kết quả</string>
+    <string name="preference_output_format_summary">Chọn định dạng tập tin kết quả OCR</string>
 </resources>

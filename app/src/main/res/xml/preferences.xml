@@ -9,4 +9,8 @@
         android:key="settingListLang"
         android:summary="@string/preference_lang_summary"
         android:title="@string/preference_lang_title" />
+    <ListPreference
+        android:key="settingListOutputFormat"
+        android:summary="@string/preference_output_format_summary"
+        android:title="@string/preference_output_format_title" />
 </PreferenceScreen>

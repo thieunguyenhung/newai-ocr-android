@@ -2,7 +2,6 @@ package vn.newai.ocr.utility;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import vn.newai.ocr.R;
 
@@ -11,6 +10,7 @@ public class LocalStorage {
 
     public static final String KEY_OCR_LANG = "OCRLang";
     public static final String KEY_USER_EMAIL = "UserEmail";
+    public static final String KEY_OUTPUT_FORMAT = "OutputFormat";
 
     /**
      * Save a string to Shared Preferences
@@ -46,5 +46,7 @@ public class LocalStorage {
     public static void initializeSetting(Context context) {
         if (getFromLocal(context, KEY_OCR_LANG).isEmpty())
             saveToLocal(context, KEY_OCR_LANG, context.getString(R.string.lang_value_vie));
+        if (getFromLocal(context, KEY_OUTPUT_FORMAT).isEmpty())
+            saveToLocal(context, KEY_OUTPUT_FORMAT, context.getString(R.string.output_format_value_html));
     }
 }

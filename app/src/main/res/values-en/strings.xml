@@ -29,4 +29,6 @@
     <string name="upload_notification_completed">Process is completed</string>
     <string name="upload_notification_title">Processing your request</string>
     <string name="upload_notification_error">There was an error processing your request</string>
+    <string name="preference_output_format_title">Output Format</string>
+    <string name="preference_output_format_summary">Output file format for OCR result</string>
 </resources>

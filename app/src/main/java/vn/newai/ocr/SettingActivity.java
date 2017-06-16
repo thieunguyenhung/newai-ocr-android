@@ -10,7 +10,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import vn.newai.ocr.utility.LocalStorage;
 public class SettingActivity extends AppCompatActivity {
     private Toolbar settingToolbar; //custom toolbar
 
-    private static String userEmail, langOCR;//user email and language preferences
+    private static String userEmail, langOCR, outputFormat;//user email, language and outputFormat preferences
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +29,7 @@ public class SettingActivity extends AppCompatActivity {
         /*-Get user setting from Shared Preference*/
         userEmail = LocalStorage.getFromLocal(this, LocalStorage.KEY_USER_EMAIL);
         langOCR = LocalStorage.getFromLocal(this, LocalStorage.KEY_OCR_LANG);
+        outputFormat = LocalStorage.getFromLocal(this, LocalStorage.KEY_OUTPUT_FORMAT);
 
         addControls();
         addEvents();
@@ -49,7 +49,7 @@ public class SettingActivity extends AppCompatActivity {
 
         /*-CoordinatorLayout container*/
         CoordinatorLayout coordinatorLayoutContainer = (CoordinatorLayout) findViewById(R.id.settingCoordinatorLayout);
-        if (userEmail.isEmpty() || langOCR.isEmpty()) {
+        if (userEmail.isEmpty() || langOCR.isEmpty() || outputFormat.isEmpty()) {
             Snackbar.make(coordinatorLayoutContainer, getString(R.string.guide_user_email), Snackbar.LENGTH_LONG).show();
         }
     }
@@ -66,7 +66,9 @@ public class SettingActivity extends AppCompatActivity {
     public static class SettingFragment extends PreferenceFragment {
         private EditTextPreference settingTxtEmail; /*-Preference text email*/
         private ListPreference settingListLang; /*-Preference list languages*/
+        private ListPreference settingListOutputFormat; /*-Preference list output format*/
         private ArrayList<String> listLangLables, listLangValues; /*-List language labels and values*/
+        private ArrayList<String> listOutputFormatLables, listOutputFormatValues; /*-List language labels and values*/
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,6 +76,7 @@ public class SettingActivity extends AppCompatActivity {
             addPreferencesFromResource(R.xml.preferences);
 
             this.setupListLang();
+            this.setupListOutputFormat();
             this.addControls();
             this.addEvents();
         }
@@ -88,6 +91,20 @@ public class SettingActivity extends AppCompatActivity {
             this.listLangValues = new ArrayList<>();
             this.listLangValues.add(getString(R.string.lang_value_vie));
             this.listLangValues.add(getString(R.string.lang_value_eng));
+        }
+
+        private void setupListOutputFormat() {
+            /*-Initialize list output format labels*/
+            this.listOutputFormatLables = new ArrayList<>();
+            listOutputFormatLables.add(getString(R.string.output_format_html));
+            listOutputFormatLables.add(getString(R.string.output_format_word));
+            listOutputFormatLables.add(getString(R.string.output_format_excel));
+
+            /*-Initialize list output format values*/
+            this.listOutputFormatValues = new ArrayList<>();
+            listOutputFormatValues.add(getString(R.string.output_format_value_html));
+            listOutputFormatValues.add(getString(R.string.output_format_value_word));
+            listOutputFormatValues.add(getString(R.string.output_format_value_excel));
         }
 
         private void addControls() {
@@ -110,6 +127,18 @@ public class SettingActivity extends AppCompatActivity {
             } else {
                 settingListLang.setValueIndex(0);
                 settingListLang.setSummary(getString(R.string.preference_lang_summary));
+            }
+
+            /*-Preference list output format*/
+            settingListOutputFormat = (ListPreference) getPreferenceScreen().findPreference("settingListOutputFormat");
+            settingListOutputFormat.setEntries(this.listOutputFormatLables.toArray(new CharSequence[this.listOutputFormatLables.size()]));
+            settingListOutputFormat.setEntryValues(this.listOutputFormatValues.toArray(new CharSequence[this.listOutputFormatValues.size()]));
+            if (null != outputFormat && !outputFormat.isEmpty()) {
+                settingListOutputFormat.setValueIndex(this.listOutputFormatValues.indexOf(outputFormat));
+                settingListOutputFormat.setSummary(settingListOutputFormat.getEntry().toString());
+            } else {
+                settingListOutputFormat.setValueIndex(0);
+                settingListOutputFormat.setSummary(getString(R.string.preference_output_format_summary));
             }
         }
 
@@ -140,6 +169,21 @@ public class SettingActivity extends AppCompatActivity {
                             LocalStorage.saveToLocal(SettingFragment.this.getActivity(), LocalStorage.KEY_OCR_LANG, langOCR);
                             settingListLang.setValueIndex(SettingFragment.this.listLangValues.indexOf(langOCR));
                             settingListLang.setSummary(settingListLang.getEntry().toString());
+                        }
+                    }
+                    return false;
+                }
+            });
+
+            settingListOutputFormat.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    if (newValue instanceof String) {
+                        String outputFormat = (String) newValue;
+                        if (!outputFormat.isEmpty()) {
+                            LocalStorage.saveToLocal(SettingFragment.this.getActivity(), LocalStorage.KEY_OUTPUT_FORMAT, outputFormat);
+                            settingListOutputFormat.setValueIndex(SettingFragment.this.listOutputFormatValues.indexOf(outputFormat));
+                            settingListOutputFormat.setSummary(settingListOutputFormat.getEntry().toString());
                         }
                     }
                     return false;

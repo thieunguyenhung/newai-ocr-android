@@ -3,7 +3,7 @@
     <string name="format_date" translatable="false">dd/MM/yyyy</string>
     <string name="format_time" translatable="false">hh:mm:ss a</string>
 
-    <string name="app_name">OCR</string>
+    <string name="app_name">NewAI OCR</string>
     <string name="activity_gallery">Thư viện ảnh</string>
     <string name="activity_file">Thư viện tập tin</string>
     <string name="activity_setting">Cài đặt</string>

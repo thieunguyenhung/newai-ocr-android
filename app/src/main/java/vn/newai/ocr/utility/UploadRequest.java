@@ -10,7 +10,7 @@ import vn.newai.ocr.GalleryActivity;
 import vn.newai.ocr.R;
 
 public class UploadRequest {
-    private static final String UPLOAD_URL = "http://35.187.215.83:8080/newai-ocr-api/rest/upload";
+    private static final String UPLOAD_URL = "http://35.194.137.113:8080/newai-ocr-api/rest/upload";
 
     /**
      * Get net.gotev.uploadservice.MultipartUploadRequest to upload file

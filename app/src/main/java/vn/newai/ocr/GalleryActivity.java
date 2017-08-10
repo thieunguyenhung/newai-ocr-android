@@ -136,7 +136,7 @@ public class GalleryActivity extends AppCompatActivity {
         /*-CoordinatorLayout container*/
         coordinatorLayoutContainer = (CoordinatorLayout) findViewById(R.id.galleryCoordinatorLayout);
         /*-View snackbar guide*/
-        final Snackbar snackbarGuide = Snackbar.make(coordinatorLayoutContainer, getString(R.string.guide_scroll_down), Snackbar.LENGTH_LONG);
+        final Snackbar snackbarGuide = Snackbar.make(coordinatorLayoutContainer, getString(R.string.guide_scroll_down), Snackbar.LENGTH_SHORT);
         snackbarGuide.setAction(getString(R.string.btn_dismiss), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,7 +149,7 @@ public class GalleryActivity extends AppCompatActivity {
         textViewGuide = (TextView) findViewById(R.id.galleryTextViewGuide);
         textViewGuide.setVisibility(View.INVISIBLE);
 
-         /*Toolbar*/
+         /*-Toolbar*/
         Toolbar galleryToolbar = (Toolbar) findViewById(R.id.toolbarGallery);
         setSupportActionBar(galleryToolbar);
         if (getSupportActionBar() != null) {
@@ -157,15 +157,15 @@ public class GalleryActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(getString(R.string.activity_gallery));
         }
 
-        /*DrawerLayout*/
+        /*-DrawerLayout*/
         drawerLayout = (DrawerLayout) findViewById(R.id.activity_gallery);
 
-        /*NavigationView*/
+        /*-NavigationView*/
         navigationView = (NavigationView) findViewById(R.id.galleryNavDrawer);
         navigationView.setItemIconTintList(null);
         setupDrawerContent(); //setup navigation contain list
 
-        /*ActionBarDrawerToggle*/
+        /*-ActionBarDrawerToggle*/
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, galleryToolbar, R.string.drawer_open, R.string.drawer_close);
         actionBarDrawerToggle.syncState();
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
@@ -173,7 +173,7 @@ public class GalleryActivity extends AppCompatActivity {
         /*-SwipeRefreshLayout*/
         galleryRefreshGrid = (SwipeRefreshLayout) findViewById(R.id.galleryRefreshGrid);
 
-        /*Grid Thumb*/
+        /*-Grid Thumb*/
         gridImageGallery = (GridView) findViewById(R.id.galleryGridThumb);
         gridImageGallery.setNumColumns(this.numColumn);
         gridImageGallery.setVisibility(View.VISIBLE);
@@ -210,6 +210,7 @@ public class GalleryActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(GalleryActivity.this, ViewImageActivity.class);
                 intent.putExtra("imageId", GalleryActivity.this.listImageId.get(position));
+                intent.putIntegerArrayListExtra("listImageId", GalleryActivity.this.listImageId);
                 startActivityForResult(intent, VIEW_IMAGE_ACTIVITY);
             }
         });

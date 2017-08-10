@@ -119,7 +119,7 @@ public class FileActivity extends AppCompatActivity {
         /*-CoordinatorLayout container*/
         coordinatorLayoutContainer = (CoordinatorLayout) findViewById(R.id.fileCoordinatorLayout);
         /*-View snackbar guide*/
-        final Snackbar snackbarGuide = Snackbar.make(coordinatorLayoutContainer, getString(R.string.guide_scroll_down), Snackbar.LENGTH_LONG);
+        final Snackbar snackbarGuide = Snackbar.make(coordinatorLayoutContainer, getString(R.string.guide_scroll_down), Snackbar.LENGTH_SHORT);
         snackbarGuide.setAction(getString(R.string.btn_dismiss), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,7 +183,7 @@ public class FileActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Log.d("Button", "Yes OCR clicked");
+                                //Log.d("Button", "Yes OCR clicked");
                                 if (!userEmail.isEmpty() && !userLang.isEmpty()) {
                                     File file = new File(FileActivity.this.listPDFFilePath.get(position));
                                     if (file.length() > MAX_FILE_SIZE)
@@ -201,7 +201,7 @@ public class FileActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 /*-Dismiss dialog*/
-                                Log.d("Button", "Cancel OCR clicked");
+                                //Log.d("Button", "Cancel OCR clicked");
                                 dialog.dismiss();
                             }
                         });

@@ -12,13 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
 import java.util.ArrayList;
 
@@ -37,7 +34,7 @@ public class ViewImageAdapter extends PagerAdapter {
         this.listImageId = listImageId;
         this.imageViewToolbar = imageViewToolbar;
         this.fabSend = fabSend;
-        toolbarStatus = true; //default is true
+        this.toolbarStatus = true; //default is true
     }
 
     @Override
@@ -54,33 +51,51 @@ public class ViewImageAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         View imageLayout = LayoutInflater.from(context).inflate(R.layout.item_list_view_image, container, false);
         if (null != imageLayout) {
-            final ProgressBar progressBar = (ProgressBar) imageLayout.findViewById(R.id.viewImageListProgressBarItem);
+            final ProgressBar progressBar = (ProgressBar) imageLayout.findViewById(R.id.viewImageItemProgressBar);
 
-            ImageView imageView = (ImageView) imageLayout.findViewById(R.id.viewImageListImageItem);
-            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             Uri imageUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, String.valueOf(this.listImageId.get(position)));
-            Glide.with(this.context).load(imageUri).listener(new RequestListener<Uri, GlideDrawable>() {
+            SubsamplingScaleImageView scaleImageView = (SubsamplingScaleImageView) imageLayout.findViewById(R.id.viewImageItemScaleImageView);
+            scaleImageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF); //Use original image rotation
+            scaleImageView.setImage(ImageSource.uri(imageUri));
+            scaleImageView.setOnImageEventListener(new SubsamplingScaleImageView.OnImageEventListener() {
                 @Override
-                public boolean onException(Exception e, Uri model, Target<GlideDrawable> target, boolean isFirstResource) {
-                    return false;
+                public void onReady() {
+
                 }
 
                 @Override
-                public boolean onResourceReady(GlideDrawable resource, Uri model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                public void onImageLoaded() {
                     progressBar.setVisibility(View.GONE);
-                    return false;
                 }
-            }).into(imageView);
 
-            /*-On viewpager clicked, hide toolbar and floating action button*/
-            imageLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onPreviewLoadError(Exception e) {
+
+                }
+
+                @Override
+                public void onImageLoadError(Exception e) {
+
+                }
+
+                @Override
+                public void onTileLoadError(Exception e) {
+
+                }
+
+                @Override
+                public void onPreviewReleased() {
+
+                }
+            });
+            scaleImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (ViewImageAdapter.this.toolbarStatus) {
+                    /*-Hide action bar and floatting action send button*/
+                    if (ViewImageAdapter.this.toolbarStatus)
                         hideOtherComponents();
-                    } else {
+                    else
                         showOtherComponents();
-                    }
                     ViewImageAdapter.this.toolbarStatus = !ViewImageAdapter.this.toolbarStatus;
                 }
             });
@@ -98,6 +113,7 @@ public class ViewImageAdapter extends PagerAdapter {
     public Parcelable saveState() {
         return null;
     }
+
 
     private void hideOtherComponents() {
         this.imageViewToolbar.animate().translationY(-this.imageViewToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();

@@ -35,11 +35,15 @@ public class ViewImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_image);
 
+        // Hide the status bar
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+
         addControls();
         addEvents();
     }
 
     private void addControls() {
+        /*-Action bar*/
         imageViewToolbar = (Toolbar) findViewById(R.id.toolbarImageView);
         imageViewToolbar.setNavigationIcon(R.drawable.ic_action_nav_back);
         setSupportActionBar(imageViewToolbar);

@@ -38,4 +38,7 @@
     <string name="err_file_too_large">File is too large, allowed maximum size is 5MB</string>
     <string name="permission_rationale_read_external_storage">The application needs to access to storage in order to perform OCR. Please grant permission in Settings.</string>
     <string name="permission_rationale_camera">The application needs to access to Camera in order to take pictures. Please grant permission in Settings.</string>
+    <string name="preference_output_group">OUTPUT</string>
+    <string name="preference_output_original_summary">Keep original format from input image</string>
+    <string name="preference_output_original_title">Original format (Beta)</string>
 </resources>

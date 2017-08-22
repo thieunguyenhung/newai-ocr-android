@@ -63,4 +63,7 @@
     <string name="preference_lang_summary">Chọn ngôn ngữ để OCR tập tin hoặc ảnh</string>
     <string name="preference_output_format_title">Định dạng tập tin kết quả</string>
     <string name="preference_output_format_summary">Chọn định dạng tập tin kết quả OCR</string>
+    <string name="preference_output_group">KẾT QUẢ</string>
+    <string name="preference_output_original_title">Giữ cấu trúc văn bản (Beta)</string>
+    <string name="preference_output_original_summary">Kết quả có cấu trúc như hình ban đầu</string>
 </resources>

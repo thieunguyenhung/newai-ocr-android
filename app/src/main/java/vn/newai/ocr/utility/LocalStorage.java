@@ -11,6 +11,7 @@ public class LocalStorage {
     public static final String KEY_OCR_LANG = "OCRLang";
     public static final String KEY_USER_EMAIL = "UserEmail";
     public static final String KEY_OUTPUT_FORMAT = "OutputFormat";
+    public static final String KEY_ORIGINAL_FORMAT = "OriginalFormat";
 
     /**
      * Save a string to Shared Preferences
@@ -48,5 +49,7 @@ public class LocalStorage {
             saveToLocal(context, KEY_OCR_LANG, context.getString(R.string.lang_value_vie));
         if (getFromLocal(context, KEY_OUTPUT_FORMAT).isEmpty())
             saveToLocal(context, KEY_OUTPUT_FORMAT, context.getString(R.string.output_format_value_html));
+        if (getFromLocal(context, KEY_ORIGINAL_FORMAT).isEmpty())
+            saveToLocal(context, KEY_ORIGINAL_FORMAT, "false");
     }
 }

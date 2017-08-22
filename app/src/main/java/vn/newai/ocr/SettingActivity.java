@@ -5,6 +5,7 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -19,7 +20,7 @@ import vn.newai.ocr.utility.LocalStorage;
 public class SettingActivity extends AppCompatActivity {
     private Toolbar settingToolbar; //custom toolbar
 
-    private static String userEmail, langOCR, outputFormat;//user email, language and outputFormat preferences
+    private static String userEmail, langOCR, outputFormat, originalFormat;//user email, language and outputFormat preferences
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,7 @@ public class SettingActivity extends AppCompatActivity {
         userEmail = LocalStorage.getFromLocal(this, LocalStorage.KEY_USER_EMAIL);
         langOCR = LocalStorage.getFromLocal(this, LocalStorage.KEY_OCR_LANG);
         outputFormat = LocalStorage.getFromLocal(this, LocalStorage.KEY_OUTPUT_FORMAT);
+        originalFormat = LocalStorage.getFromLocal(this, LocalStorage.KEY_ORIGINAL_FORMAT);
 
         addControls();
         addEvents();
@@ -69,6 +71,7 @@ public class SettingActivity extends AppCompatActivity {
         private ListPreference settingListOutputFormat; /*-Preference list output format*/
         private ArrayList<String> listLangLables, listLangValues; /*-List language labels and values*/
         private ArrayList<String> listOutputFormatLables, listOutputFormatValues; /*-List language labels and values*/
+        private SwitchPreference settingSwitchOriginalFormat; /*-Switch preference original format*/
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -140,6 +143,13 @@ public class SettingActivity extends AppCompatActivity {
                 settingListOutputFormat.setValueIndex(0);
                 settingListOutputFormat.setSummary(getString(R.string.preference_output_format_summary));
             }
+
+            /*-Switch preference original format*/
+            settingSwitchOriginalFormat = (SwitchPreference) getPreferenceScreen().findPreference("settingSwitchOriginalFormat");
+            if (null != originalFormat && originalFormat.equals("true"))
+                settingSwitchOriginalFormat.setChecked(true);
+            else
+                settingSwitchOriginalFormat.setChecked(false);
         }
 
         private void addEvents() {
@@ -187,6 +197,18 @@ public class SettingActivity extends AppCompatActivity {
                         }
                     }
                     return false;
+                }
+            });
+
+            settingSwitchOriginalFormat.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean state = (Boolean) newValue;
+                    if (state)
+                        LocalStorage.saveToLocal(SettingFragment.this.getActivity(), LocalStorage.KEY_ORIGINAL_FORMAT, "true");
+                    else
+                        LocalStorage.saveToLocal(SettingFragment.this.getActivity(), LocalStorage.KEY_ORIGINAL_FORMAT, "false");
+                    return true;
                 }
             });
         }

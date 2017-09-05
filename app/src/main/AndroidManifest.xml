@@ -24,7 +24,7 @@
         <activity android:name=".GalleryActivity" />
         <activity android:name=".ViewImageActivity" />
         <activity android:name=".FileActivity" />
-        <activity android:name=".SettingActivity"/>
+        <activity android:name=".SettingActivity" />
     </application>
 
 </manifest>

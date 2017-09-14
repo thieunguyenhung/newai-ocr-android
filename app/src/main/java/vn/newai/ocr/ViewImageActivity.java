@@ -49,7 +49,6 @@ public class ViewImageActivity extends AppCompatActivity {
         setSupportActionBar(imageViewToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setTitle("");
         }
 

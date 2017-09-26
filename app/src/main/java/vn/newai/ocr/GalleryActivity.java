@@ -21,6 +21,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -462,6 +463,7 @@ public class GalleryActivity extends AppCompatActivity {
      * Start camera
      */
     private void startCameraIntent() {
+
         File imagesFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "NewAI");
         if (!imagesFolder.exists()) {
             imagesFolder.mkdirs();
@@ -474,8 +476,11 @@ public class GalleryActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
+        //Log.d("FileProvider", FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file).toString());
+        //Log.d("Uri.fromFile", Uri.fromFile(file).toString());
         Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+        i.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file));
         startActivityForResult(i, MY_PERMISSIONS_REQUEST_CAMERA);
     }
 
